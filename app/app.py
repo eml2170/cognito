@@ -55,4 +55,4 @@ if __name__ == '__main__':
     socketio.run(app, debug=True)
 else:
     # Production
-    socketio = SocketIO(app, cors_allowed_origins="*")
+    socketio = SocketIO(app, async_mode='gevent')
