@@ -51,4 +51,8 @@ def handle_message(data):
     socketio.emit('message', data)
 
 if __name__ == '__main__':
+    # Development
     socketio.run(app, debug=True)
+else:
+    # Production
+    socketio = SocketIO(app, cors_allowed_origins="*")
