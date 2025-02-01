@@ -7,6 +7,13 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
 socketio = SocketIO(app)
 
+# Configure SocketIO for both development and production
+socketio = SocketIO(app, 
+                   async_mode='gevent',
+                   cors_allowed_origins="*",  # Be more restrictive in production
+                   logger=True,
+                   engineio_logger=True)
+
 # JSON file path
 MESSAGES_FILE = 'messages.json'
 
@@ -51,8 +58,4 @@ def handle_message(data):
     socketio.emit('message', data)
 
 if __name__ == '__main__':
-    # Development
     socketio.run(app, debug=True)
-else:
-    # Production
-    socketio = SocketIO(app, async_mode='gevent')
