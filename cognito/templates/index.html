@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>Cognito</title>
+        <!-- Socket.IO client script -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.4/socket.io.js"></script>
+      </head>
+  <body>
+    <h1>Cognito</h1>
+
+    <!-- Username and message form -->
+    <div>
+      <label for="username">Username:</label>
+      <input id="username" type="text" placeholder="Your Name"/>
+      <br><br>
+      <label for="message">Message:</label>
+      <input id="message" type="text" placeholder="Type something..."/>
+      <button id="sendBtn">Send</button>
+    </div>
+
+    <!-- Chat messages go here -->
+    <ul id="chat"></ul>
+
+    <script>
+      // Connect to Socket.IO
+      const socket = io();
+
+      // 1. Load all previous messages when connected
+      socket.on('load_previous_messages', (previousMessages) => {
+        const chatList = document.getElementById('chat');
+        chatList.innerHTML = ''; // Clear any existing to avoid duplication
+        previousMessages.forEach((msgObj) => {
+          const li = document.createElement('li');
+          li.textContent = `${msgObj.username}: ${msgObj.msg}`;
+          chatList.appendChild(li);
+        });
+      });
+
+      // 2. Listen for new incoming messages
+      socket.on('message', (data) => {
+        const chatList = document.getElementById('chat');
+        const li = document.createElement('li');
+        li.textContent = `${data.username}: ${data.msg}`;
+        chatList.appendChild(li);
+      });
+
+      // 3. Send a new message
+    const sendMessage = () => {
+        const username = document.getElementById('username').value;
+        const msg = document.getElementById('message').value;
+        
+        if (username && msg) {
+          console.log('Sending message:', { username, msg }); // Debug log
+          // Send the message to the server
+          socket.emit('message', { username, msg });
+          // Clear the message input
+          document.getElementById('message').value = '';
+        } else {
+          console.log('Missing username or message'); // Debug log
+        }
+      };
+
+      // Handle button click
+      document.getElementById('sendBtn').onclick = sendMessage;
+
+      // Handle Enter key in message input
+      document.getElementById('message').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          sendMessage();
+        }
+      });
+
+      // Add connection status logging
+      socket.on('connect', () => {
+        console.log('Connected to server');
+      });
+
+      socket.on('connect_error', (error) => {
+        console.error('Connection error:', error);
+      });
+    </script>
+  </body>
+</html>
