@@ -2,6 +2,7 @@ import os
 import json
 from flask import Flask, render_template, request
 from flask_socketio import SocketIO
+from datetime import datetime
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
@@ -47,15 +48,21 @@ def handle_message(data):
     save to disk, and broadcast it to everyone.
     `data` is expected to be a dict like: {"username": "Alice", "msg": "Hello world!"}
     """
+    # Add timestamp to the message data
+    message_with_timestamp = {
+        **data,
+        'timestamp': datetime.now().isoformat()
+    }
+    
     # Append the new message to the in-memory list
-    messages.append(data)
+    messages.append(message_with_timestamp)
 
     # Persist the updated messages list to disk
     with open(MESSAGES_FILE, 'w', encoding='utf-8') as f:
         json.dump(messages, f, ensure_ascii=False, indent=2)
 
     # Broadcast the new message to *all* connected clients
-    socketio.emit('message', data)
+    socketio.emit('message', message_with_timestamp)
 
 if __name__ == '__main__':
     socketio.run(app, debug=True)
