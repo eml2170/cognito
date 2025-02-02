@@ -68,15 +68,25 @@
                 word-wrap: break-word;
             }
 
+            .logo {
+                max-width: 200px;  /* Adjust this value based on your logo size */
+                height: auto;
+                display: block;
+                margin: 20px auto;
+            }
+
             @media (max-width: 600px) {
                 body {
                     padding: 10px;
+                }
+                .logo {
+                    max-width: 150px;  /* Slightly smaller on mobile */
                 }
             }
         </style>
     </head>
     <body>
-        <h1>Cognito</h1>
+        <img src="/static/images/logo_nobg.png" alt="Cognito" class="logo">
 
         <!-- Updated form structure -->
         <div class="chat-container">

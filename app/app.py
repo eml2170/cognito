@@ -4,7 +4,7 @@ from flask import Flask, render_template, request
 from flask_socketio import SocketIO
 from datetime import datetime
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='static')
 app.config['SECRET_KEY'] = 'secret!'
 socketio = SocketIO(app)
 
